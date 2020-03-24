@@ -1,5 +1,5 @@
 %##########################################################################
-%#####  Progrtram plots the spectrogram and the range map  ################
+%#####  Progrtram converts the EXCEL file into a *.mat file ###############
 %##########################################################################
 %
 %--------------------------------------
@@ -11,7 +11,7 @@
 % Updated:      03/24/2020
 
 %% set clear
-clc; clear all; close all;
+clc; clear all;   %close all;
 set(0,'DefaultAxesFontSize',14);
 set(0,'DefaultFigureWindowStyle','docked');
 set(0,'Defaultlinelinewidth',2);
@@ -51,7 +51,7 @@ colorbar;
 caxis([max(max(10*log10(abs(scansMTI))))-30, inf]);
 
 %% hilbert enveloping
-hil = hilbert(scansMTI(:));
+hil = hilbert(scansMTI(:)); % after MTI and mean substraction
 hil_resha = reshape(hil,NTS,NScans);
 RM_hil = 10*log10(abs(hil_resha));
 fig = figure;
@@ -62,7 +62,7 @@ caxis([max(max(RM_hil))-30, inf]);
 
 %% spectrogram
 specs = fft(scansMTI);
-neededRangeBins = [70:110]; 
+neededRangeBins = [70:110]; %[70:110]; % ,270:310 The best for 384 bins
 
 % sprecrogram computation function
 [S_sum, f,t] = spectr(specs, neededRangeBins,fs_slow);
@@ -79,7 +79,7 @@ plot(diff([scn.Tstmp]),'.');
 %% error statement 
 if max(diff([scn.Tstmp])) > min(diff([scn.Tstmp]))+1
    fprintf('the minimum time between \nthe timestamps is %d whereas\nthe max timestamp is %d\n',min(diff([scn.Tstmp])),max(diff([scn.Tstmp]))); 
-    disp('press any key to continue');pause; 
+    disp('press any key to contin');pause; 
 end
 
 %% range map and spectorgram rezizing
@@ -88,13 +88,11 @@ sspec_resize = mat2gray(imresize(sspec_sum,[128 64*T]));  % spectrogram image
 
 
 %% plot the final images 
-% plotting the range map
 figure();
 subplot(211);
 imagesc([0 t],[0 4.4],psd_resize); axis xy
 colormap jet; colorbar
 
-% plotting the spectrogram
 subplot(212);
 imagesc([0 t],[-f(end)/2 f(end)/2],sspec_resize); axis xy
 colormap jet; colorbar
