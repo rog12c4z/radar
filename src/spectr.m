@@ -1,4 +1,15 @@
 function [S_sum, f,t] = spectr(specs, neededRangeBins,fs_slow ) 
+% THE FUCTION computes the spectrogram from the fft of the range map. There
+% are two frequency clusteres available -- either at 2GHz and or at 4GHz.
+% The function uses the 2GHz frequency bins. 
+% input: 
+% fft matrix            --> specs
+% selected bins         --> neededRangeBins
+% sample frequency      --> fs_slow
+% returns: 
+% computed spectrogram  --> S_sum
+% Frequency vector      --> f
+% time vector           --> t
 
 for ki = 1:numel(neededRangeBins)
     specs111 = specs(neededRangeBins(ki),:);
